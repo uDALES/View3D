@@ -191,7 +191,17 @@ void GetCtrl(I1 *str, VFCTRL *vfCtrl)
       } else {
         _maxNVT = i;
       }
-    } else {
+    }
+    else if(STRCMPI(p, "maxD") == 0)
+    {
+      p = strtok(NULL, "= ,");
+      if(FltCon(p, &r)) {
+        error(2, __FILE__, __LINE__, "Bad float value: %s", p);
+      } else {
+        vfCtrl->maxD = r;
+      }
+    }
+     else {
       error(1, __FILE__, __LINE__, "Invalid control word: %s", p);
       p = strtok(NULL, "= ,");
     }
@@ -816,4 +826,3 @@ void TestSubSrf(SRFDAT3D *srf, const IX *baseSrf, VFCTRL *vfCtrl)
   }  /* end surface loop */
 
 }  /* end of TestSubSrf */
-

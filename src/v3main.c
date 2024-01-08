@@ -49,7 +49,7 @@ void ReadVF(I1 *fileName, I1 *program, I1 *version, IX *format, IX *encl,
 void SaveVF(I1 *fileName, I1 *program, I1 *version, IX format, IX encl,
             IX didemit, IX nSrf, R4 *area, R4 *emit, R8 **AF, R4 *vtmp);
 //void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** const name,
-//              const R4 *area, const R4 *emit, const IX *base, const R8 **AF, 
+//              const R4 *area, const R4 *emit, const IX *base, const R8 **AF,
 //              IX flag);
 
 /***  usage  ******************************************************************/
@@ -85,7 +85,7 @@ IX main(IX argc, I1 **argv)
   I1 title[LINELEN];  /* project title */
   I1 **name;       /* surface names [1:nSrf][0:NAMELEN] */
   I1 *types[]={"rsrf","subs","mask","nuls","obso"};
-  VERTEX3D *xyz;   /* vector of vertces [1:nVrt] - for ease in 
+  VERTEX3D *xyz;   /* vector of vertces [1:nVrt] - for ease in
                         converting V3MAIN to a subroutine */
   SRFDAT3D *srf;   /* vector of surface data structures [1:nSrf] */
   VFCTRL vfCtrl;   /* VF calculation control parameters - avoid globals */
@@ -169,6 +169,7 @@ IX main(IX argc, I1 **argv)
   vfCtrl.epsAdap = 1.0e-4f; // convergence for adaptive integration
   vfCtrl.maxRecursALI = 12; // maximum number of recursion levels
   vfCtrl.maxRecursion = 8;  // maximum number of recursion levels
+  vfCtrl.maxD = INFINITY; // cut-off distance
 
   /* Read Vertex/Surface data file */
   //NxtOpen(inFile, __FILE__, __LINE__);
@@ -584,7 +585,7 @@ R8 VolPrism(VERTEX3D *a, VERTEX3D *b, VERTEX3D *c)
 /***  ReportAF.c  ************************************************************/
 /* const removal: const I1 ** name and const R8 ** AF */
 void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name,
-              const R4 *area, const R4 *emit, const IX *base, R8 ** AF, 
+              const R4 *area, const R4 *emit, const IX *base, R8 ** AF,
               IX flag)
   {
   IX n;    /* row */
@@ -690,4 +691,3 @@ void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name,
     }
 
   }  /* end of ReportAF */
-

@@ -112,6 +112,49 @@ void SaveF1(I1 *fileName, I1 *header, IX nSrf,
 
 }  /* end of SaveF1 */
 
+/***  SaveF2.c  **************************************************************/
+
+/*  Save view factors in sparse text format.  */
+
+void SaveF2(I1 *fileName, I1 *header, IX nSrf,
+            R4 *area, R4 *emit, R8 **AF, R4 *F)
+{
+  FILE *vfout;
+  IX n;    /* row */
+  IX m;    /* column */
+  R8 FF;
+
+  vfout = fopen(fileName, "w");
+  // fprintf(vfout, "%s", header);
+  // fprintf(vfout, "%g", area[1]);
+  // for(n=2; n<=nSrf; n++) {
+  //   fprintf(vfout, " %g", area[n]);
+  // }
+  // fprintf(vfout, "\n");
+
+  for(n=1; n<=nSrf; n++) {     /* process AF values for row n */
+    R8 Ainv = 1.0 / area[n];
+    for(m=1; m<=nSrf; m++) {     /* process column values */
+        if (m < n) {
+           FF = AF[n][m] * Ainv;
+        } else {
+           FF = AF[m][n] * Ainv;
+        }
+        if (FF >= 5E-7) {
+        fprintf(vfout, "%d %d %.6f\n", n, m, FF);
+      }
+    }
+  }
+  //
+  // fprintf(vfout, "%.3f", emit[1]);
+  // for(n=2; n<=nSrf; n++) {
+  //   fprintf(vfout, " %.3f", emit[n]);
+  // }
+  // fprintf(vfout, "\n");
+  fclose(vfout);
+
+}  /* end of SaveF2 */
+
 /***  SaveAF.c  **************************************************************/
 
 /*  Save view factors from 3D calculations.  */
@@ -175,10 +218,11 @@ void SaveVF(I1 *fileName, I1 *program, I1 *version,
     header[30] = '\r';
     header[31] = '\n';
     SaveF1(fileName, header, nSrf, area, emit, AF, vtmp);
+  } else if(format == 2) { /* sparse text file */
+    SaveF2(fileName, header, nSrf, area, emit, AF, vtmp);
   } else {
     error(3, __FILE__, __LINE__, "Undefined format: %d", format);
     //    SaveAF(fileName, header, nSrf, title, name, area, emit, AF);
   }
 
 }  /* end SaveVF */
-

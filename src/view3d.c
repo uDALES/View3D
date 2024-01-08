@@ -107,7 +107,7 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
   maxSrfT = vfCtrl->nPossObstr + 1;
   nn = vfCtrl->nRadSrf;
   if(nn>1) {
-    nAFtot = (R8)((nn-1)*nn);
+    nAFtot = (R8)((nn-1)*nn); /* bug: this does not produce the right answer for large nn*/
   }
   if(vfCtrl->row > 0) {
     n1 = nn = vfCtrl->row;   /* can process a single row of view factors, */
@@ -125,7 +125,7 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
   vfCtrl->srfOT = Alc_V(0, maxSrfT, sizeof(SRFDAT3X), __FILE__, __LINE__);
   bins = Alc_MC(0, 4, 1, 5, sizeof(UX), __FILE__, __LINE__);
   vfCtrl->failConverge = 0;
-  
+
   if(vfCtrl->nMaskSrf) { /* pre-process view masking surfaces */
     maskSrf = Alc_V(1, vfCtrl->nMaskSrf, sizeof(IX), __FILE__, __LINE__);
     for(m=1,n=vfCtrl->nRadSrf; n; n--) { /* set mask list */
@@ -160,7 +160,8 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
   for(n=n1; n<=nn; n++) {  /* process AF values for row N */
     _row = n;
     if(vfCtrl->row == 0) { /* progress display - all surfaces */
-      R8 pctDone = 100 * (R8)((n-1)*n) / nAFtot;
+      /*R8 pctDone = 100 * (R8)((n-1)*n) / nAFtot;*/
+      R8 pctDone = 100 * (R8)(n-1)/(nn-1)*n/nn;
       fprintf(stderr, "\rSurface: %d; ~ %.1f %% complete", _row, pctDone);
     }
     AF[n][n] = 0.0;
@@ -200,6 +201,16 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
       if(mayView) {
         mayView = SelfObstructionTest3D(srf+m, srf+n, &srfN);
       }
+
+      VECTOR((&srfN.ctd), (&srfM.ctd), (&vNM));
+      distNM = VLEN((&vNM));
+      if(distNM < 1.0e-5 * (srfN.rc + srfM.rc)) {
+        error(3,__FILE__,__LINE__,"Surfaces have same centroids in View3D");
+      }
+      if (distNM > vfCtrl->maxD) {
+         continue;
+      }
+
       if(mayView) {
         if(srfN.area * srfM.area == 0.0) { /* must clip one or both surfces */
           if(srfN.area + srfM.area == 0.0) {
@@ -216,11 +227,6 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
           DumpSrfNM("srfN", &srfN);
           DumpSrfNM("srfM", &srfM);
           fflush(_ulog);
-        }
-        VECTOR((&srfN.ctd), (&srfM.ctd), (&vNM));
-        distNM = VLEN((&vNM));
-        if(distNM < 1.0e-5 * (srfN.rc + srfM.rc)) {
-          error(3,__FILE__,__LINE__,"Surfaces have same centroids in View3D");
         }
 
         nProb = nPossN;
@@ -653,6 +659,5 @@ void InitViewMethod(VFCTRL *vfCtrl)
     _dai1 = 1.0f;
     _sli1 = 0.6f;
   }
-  
-}  /* end InitViewMethod */
 
+}  /* end InitViewMethod */

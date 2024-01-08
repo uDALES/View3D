@@ -13,7 +13,7 @@ IX _encl;    /* true = surfaces form an enclosure */
 IX _list;    /* output control, higher value = more output */
 
 IX _nAllSrf;       /* total number of surfaces */
-IX _nRadSrf;       /* number of radiating surfaces; 
+IX _nRadSrf;       /* number of radiating surfaces;
                       initially includes mask & null surfaces */
 IX _nMaskSrf;      /* number of mask & null surfaces */
 IX _nObstrSrf;     /* number of obstruction surfaces */
@@ -44,9 +44,10 @@ U4 _usedVObs;      /* number of ViewObstructed() calculations used */
 U4 _totPoly;       /* total number of polygon view factors */
 U4 _totVpt;        /* total number of view points */
 IX _failConverge;  /* 1 if any calculation failed to converge */
+R8 _maxD;          /* vf=0 if two surfaces separated by maxD */
 SRFDAT3X _srf1T;   /* participating surface; transformed coordinates */
 SRFDAT3X _srf2T;   /* participating surface; transformed coordinates;
-                      view from srf1T toward srf2T. */ 
+                      view from srf1T toward srf2T. */
 SRFDAT3X *_srfOT;  /* pointer to array of view obstrucing surfaces;
                        dimensioned from 0 to maxSrfT in View3d();
                        coordinates transformed relative to srf2T. */

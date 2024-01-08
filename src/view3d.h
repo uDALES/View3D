@@ -70,7 +70,7 @@ typedef struct v3d {     /* structure for a 3D vertex or vector */
 #define VECTOR(a,b,c)   \
     c->x = b->x - a->x; \
     c->y = b->y - a->y; \
-    c->z = b->z - a->z; 
+    c->z = b->z - a->z;
 
 /*  VCOPY:  copy elements from vertex/vector A to B.  */
 #define VCOPY(a,b)  { b->x = a->x; b->y = a->y; b->z = a->z; }
@@ -79,7 +79,7 @@ typedef struct v3d {     /* structure for a 3D vertex or vector */
 #define VMID(a,b,c)   \
     c->x = 0.5 * (a->x + b->x); \
     c->y = 0.5 * (a->y + b->y); \
-    c->z = 0.5 * (a->z + b->z); 
+    c->z = 0.5 * (a->z + b->z);
 
 /*  VDOT:  compute dot product of vectors A and B.  */
 #define VDOT(a,b)   (a->x * b->x + a->y * b->y + a->z * b->z)
@@ -94,13 +94,13 @@ typedef struct v3d {     /* structure for a 3D vertex or vector */
 #define VCROSS(a,b,c)   \
     c->x = a->y * b->z - a->z * b->y; \
     c->y = a->z * b->x - a->x * b->z; \
-    c->z = a->x * b->y - a->y * b->x; 
+    c->z = a->x * b->y - a->y * b->x;
 
 /*  VSCALE:  vector B = scalar C times vector A.  */
 #define VSCALE(c,a,b)  \
     b->x = c * a->x; \
     b->y = c * a->y; \
-    b->z = c * a->z; 
+    b->z = c * a->z;
 
 typedef struct dircos {       /* structure for direction cosines */
   R8  x;  /* X-direction cosine */
@@ -203,6 +203,7 @@ typedef struct {         /* view factor calculation control values */
   U4 totPoly;       /* total number of polygon view factors */
   U4 totVpt;        /* total number of view points */
   IX failConverge;  /* 1 if any calculation failed to converge */
+  R8 maxD;          /* vf=0 if two surfaces separated by maxD */
   SRFDAT3X srf1T;   /* participating surface; transformed coordinates */
   SRFDAT3X srf2T;   /* participating surface; transformed coordinates;
                        view from srf1T toward srf2T. */
@@ -247,7 +248,7 @@ void GetVS3Da(I1 **name, R4 *emit, IX *base, IX *cmbn,SRFDAT3D *srf,
               VERTEX3D *xyz, VFCTRL *vfCtrl);
 R8 VolPrism(VERTEX3D *a, VERTEX3D *b, VERTEX3D *c);
 void SetPlane(SRFDAT3D *srf);
-void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name, 
+void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name,
               const R4 *area, const R4 *emit, const IX *base, R8 ** AF,
               IX flag);
 
@@ -258,7 +259,7 @@ IX ProjectionDirection(SRFDAT3D *srf, SRFDATNM *srfn, SRFDATNM *srfm,
                        IX *los, VFCTRL *vfCtrl);
 
 R8 ViewUnobstructed(VFCTRL *vfCtrl, IX row, IX col);
-R8 View2AI(const IX nss1, const DIRCOS *dc1, const VERTEX3D *pt1, 
+R8 View2AI(const IX nss1, const DIRCOS *dc1, const VERTEX3D *pt1,
            const R8 *area1, const IX nss2, const DIRCOS *dc2,
            const VERTEX3D *pt2, const R8 *area2);
 R8 View2LI(const IX nd1, const IX nv1, const EDGEDCS *rc1, EDGEDIV **dv1,
@@ -267,7 +268,7 @@ R8 View1LI(const IX nd1, const IX nv1, const EDGEDCS *rc1, EDGEDIV **dv1,
            const VERTEX3D *v1, const IX nv2, const VERTEX3D *v2);
 R8 V1LIpart(const VERTEX3D *pp, const VERTEX3D *b0, const VERTEX3D *b1,
             const VECTOR3D *B, const R8 b2, IX *flag);
-R8 V1LIxact(const VERTEX3D *a0, const VERTEX3D *a1, const R8 a, 
+R8 V1LIxact(const VERTEX3D *a0, const VERTEX3D *a1, const R8 a,
             const VERTEX3D *b0, const VERTEX3D *b1, const R8 b);
 R8 V1LIadapt(VERTEX3D Pold[3], R8 dFold[3], R8 h, const VERTEX3D *b0,
 const VERTEX3D *b1, const VECTOR3D *B, const R8 b2, IX level,
@@ -328,7 +329,7 @@ void InitTmpVertMem(void);
 void FreeTmpVertMem(void);
 void InitPolygonMem(const R8 epsDist, const R8 epsArea);
 void FreePolygonMem(void);
-IX LimitPolygon(IX nVrt, VERTEX2D polyVrt[], const R8 maxX, const R8 minX, 
+IX LimitPolygon(IX nVrt, VERTEX2D polyVrt[], const R8 maxX, const R8 minX,
                 const R8 maxY, const R8 minY);
 void DumpHC(I1 *title, const POLY *pfp, const POLY *plp);
 void DumpFreePolygons(void);
@@ -356,4 +357,3 @@ void LUFactorSymm(const IX neq, R8 **a);
 void LUSolveSymm(const IX neq, R8 **a, R8 *b);
 void DAXpY(const IX n, const R8 a, const R8 *x, R8 *y);
 R8 DotProd(const IX n, const R8 *x, const R8 *y);
-
