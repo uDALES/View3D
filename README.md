@@ -28,7 +28,8 @@ The program is written in portable C, and thus should compile on most systems wi
     * Makefiles: Open a command prompt or terminal window, change directories to where you put the source, and run
         * `make` to compile with GCC
         * `nmake /F Makefile.windows` to compile with the Visual Studio compiler
-    * CMake: Create a build directory, point CMake at it and the source directory and then do the usual thing. This will build the program and the documentation (using the UseLatex CMake macros: www.github.com/kmorel/UseLATEX). This is relatively new and may not really work all that well yet.
+    * CMake: Create and enter a `build` directory, do `cmake ..` then `make`. The executable is located at `build/src/view3d`.
+    * This will build the program and the documentation (using the UseLatex CMake macros: www.github.com/kmorel/UseLATEX). This is relatively new and may not really work all that well yet.
 
 That's it. Standard caveats with respect to paths apply.
 
@@ -45,3 +46,5 @@ This will produce an two files in the current directory: `outputfile` and `View3
 Jason DeGraw
 
 April 29, 2014
+
+Edited by Sam Owens, Jan 08, 2024.
