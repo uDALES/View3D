@@ -196,21 +196,17 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
         fflush(_ulog);
       }
 
+      VECTOR((&srf[n].ctd), (&srf[m].ctd), (&vNM));
+      distNM = VLEN((&vNM));
+      if (distNM > vfCtrl->maxD) {
+         continue;
+      }
+
       minArea = MIN(srf[n].area, srf[m].area);
       mayView = SelfObstructionTest3D(srf+n, srf+m, &srfM);
       if(mayView) {
         mayView = SelfObstructionTest3D(srf+m, srf+n, &srfN);
       }
-
-      VECTOR((&srfN.ctd), (&srfM.ctd), (&vNM));
-      distNM = VLEN((&vNM));
-      if(distNM < 1.0e-5 * (srfN.rc + srfM.rc)) {
-        error(3,__FILE__,__LINE__,"Surfaces have same centroids in View3D");
-      }
-      if (distNM > vfCtrl->maxD) {
-         continue;
-      }
-
       if(mayView) {
         if(srfN.area * srfM.area == 0.0) { /* must clip one or both surfces */
           if(srfN.area + srfM.area == 0.0) {
@@ -227,6 +223,11 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
           DumpSrfNM("srfN", &srfN);
           DumpSrfNM("srfM", &srfM);
           fflush(_ulog);
+        }
+        VECTOR((&srfN.ctd), (&srfM.ctd), (&vNM));
+        distNM = VLEN((&vNM));
+        if(distNM < 1.0e-5 * (srfN.rc + srfM.rc)) {
+        error(3,__FILE__,__LINE__,"Surfaces have same centroids in View3D");
         }
 
         nProb = nPossN;
