@@ -249,11 +249,11 @@ void GetVS3Da(I1 **name, R4 *emit, IX *base, IX *cmbn,SRFDAT3D *srf,
 R8 VolPrism(VERTEX3D *a, VERTEX3D *b, VERTEX3D *c);
 void SetPlane(SRFDAT3D *srf);
 void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name,
-              const R4 *area, const R4 *emit, const IX *base, R8 ** AF,
+              const R4 *area, const R4 *emit, const IX *base, R4 ** AF,
               IX flag);
 
 /* 3-D view factor functions */
-void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,R8 **AF,
+void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,R4 **AF,
             VFCTRL *vfCtrl);
 IX ProjectionDirection(SRFDAT3D *srf, SRFDATNM *srfn, SRFDATNM *srfm,
                        IX *los, VFCTRL *vfCtrl);
@@ -347,13 +347,13 @@ void DumpVA(I1 *title, const IX rows, const IX cols, R8 *a);
 
 /* post processing */
 IX DelNull(const IX nSrf, SRFDAT3D *srf, IX *base, IX *cmbn, R4 *emit,
-           R4 *area, I1 **name, R8 **AF);
-void NormAF(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF,
+           R4 *area, I1 **name, R4 **AF);
+void NormAF(const IX nSrf, const R4 *emit, const R4 *area, R4 **AF,
             const R8 eMax, const IX itMax);
-IX Combine(const IX nSrf, const IX *cmbn, R4 *area, I1 **name, R8 **AF);
-void Separate(const IX nSrf, const IX *base, R4 *area, R8 **AF);
-void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF);
-void LUFactorSymm(const IX neq, R8 **a);
-void LUSolveSymm(const IX neq, R8 **a, R8 *b);
-void DAXpY(const IX n, const R8 a, const R8 *x, R8 *y);
-R8 DotProd(const IX n, const R8 *x, const R8 *y);
+IX Combine(const IX nSrf, const IX *cmbn, R4 *area, I1 **name, R4 **AF);
+void Separate(const IX nSrf, const IX *base, R4 *area, R4 **AF);
+void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R4 **AF);
+void LUFactorSymm(const IX neq, R4 **a);
+void LUSolveSymm(const IX neq, R4 **a, R4 *b);
+void DAXpY(const IX n, const R4 a, const R4 *x, R4 *y);
+R4 DotProd(const IX n, const R4 *x, const R4 *y);

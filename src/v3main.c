@@ -44,10 +44,10 @@ I1 *methods[7] = {"2AI", "1AI", "2LI", "1LI",
 IX _maxNVT=12;   /* maximum number of temporary polygon overlap vertices */
 
 void ReadVF(I1 *fileName, I1 *program, I1 *version, IX *format, IX *encl,
-            IX *didemit, IX *nSrf, R4 *area, R4 *emit, R8 **AF, R4 **F,
+            IX *didemit, IX *nSrf, R4 *area, R4 *emit, R4 **AF, R4 **F,
             IX init, IX shape);
 void SaveVF(I1 *fileName, I1 *program, I1 *version, IX format, IX encl,
-            IX didemit, IX nSrf, R4 *area, R4 *emit, R8 **AF, R4 *vtmp);
+            IX didemit, IX nSrf, R4 *area, R4 *emit, R4 **AF, R4 *vtmp);
 //void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** const name,
 //              const R4 *area, const R4 *emit, const IX *base, const R8 **AF,
 //              IX flag);
@@ -89,7 +89,7 @@ IX main(IX argc, I1 **argv)
                         converting V3MAIN to a subroutine */
   SRFDAT3D *srf;   /* vector of surface data structures [1:nSrf] */
   VFCTRL vfCtrl;   /* VF calculation control parameters - avoid globals */
-  R8 **AF;         /* triangular array of area*view factor values [1:nSrf][] */
+  R4 **AF;         /* triangular array of area*view factor values [1:nSrf][] */
   R4 *area;        /* vector of surface areas [1:nSrf] */
   R4 *emit;        /* vector of surface emittances [1:nSrf] */
   IX *base;        /* vector of base surface numbers [1:nSrf] */
@@ -316,7 +316,7 @@ IX main(IX argc, I1 **argv)
   fflush(_ulog);
 
   if(vfCtrl.row) {
-    AF = Alc_MC(vfCtrl.row, vfCtrl.row, 1, nSrf0, sizeof(R8), __FILE__, __LINE__);
+    AF = Alc_MC(vfCtrl.row, vfCtrl.row, 1, nSrf0, sizeof(R4), __FILE__, __LINE__);
     if(vfCtrl.col) {
       fprintf(stderr, "Computing view factor for surface %d to surface %d\n\n",
               vfCtrl.row, vfCtrl.col);
@@ -326,7 +326,7 @@ IX main(IX argc, I1 **argv)
     }
   } else {
     time1 = CPUtime(0.0);
-    AF = Alc_MSR(1, nSrf0, sizeof(R8), __FILE__, __LINE__);
+    AF = Alc_MSR(1, nSrf0, sizeof(R4), __FILE__, __LINE__);
     time1 = CPUtime(time1);
     if(time1 > 1) {
       sprintf(_string, "\n %.2f seconds to allocate %ld byte view factor matrix\n",
@@ -536,9 +536,9 @@ IX main(IX argc, I1 **argv)
 
 FreeMemory:
   if(vfCtrl.row) {
-    Fre_MC(AF, vfCtrl.row, vfCtrl.row, 1, nSrf0, sizeof(R8), __FILE__, __LINE__);
+    Fre_MC(AF, vfCtrl.row, vfCtrl.row, 1, nSrf0, sizeof(R4), __FILE__, __LINE__);
   } else {
-    Fre_MSR((void **)AF, 1, nSrf0, sizeof(R8), __FILE__, __LINE__);
+    Fre_MSR((void **)AF, 1, nSrf0, sizeof(R4), __FILE__, __LINE__);
   }
   Fre_V(srf, 1, vfCtrl.nAllSrf, sizeof(SRFDAT3D), __FILE__, __LINE__);
   Fre_V(cmbn, 1, nSrf0, sizeof(IX), __FILE__, __LINE__);
@@ -583,9 +583,9 @@ R8 VolPrism(VERTEX3D *a, VERTEX3D *b, VERTEX3D *c)
   }  /* end of VolPrism */
 
 /***  ReportAF.c  ************************************************************/
-/* const removal: const I1 ** name and const R8 ** AF */
+/* const removal: const I1 ** name and const R4 ** AF */
 void ReportAF(const IX nSrf, const IX encl, const I1 *title, I1 ** name,
-              const R4 *area, const R4 *emit, const IX *base, R8 ** AF,
+              const R4 *area, const R4 *emit, const IX *base, R4 ** AF,
               IX flag)
   {
   IX n;    /* row */

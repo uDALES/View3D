@@ -36,7 +36,7 @@
 #include <float.h>  /* define: FLT_EPSILON */
 #include "types.h"
 #include "view3d.h"
-#include "prtyp.h" 
+#include "prtyp.h"
 
 extern FILE *_ulog; /* log file */
 extern IX _list;    /* output control, higher value = more output */
@@ -47,7 +47,7 @@ extern IX _list;    /* output control, higher value = more output */
 //  Return reduced number of surfaces, nSrf.  */
 
 IX DelNull(const IX nSrf, SRFDAT3D *srf, IX *base, IX *cmbn,
-           R4 *emit, R4 *area, I1 **name, R8 **AF)
+           R4 *emit, R4 *area, I1 **name, R4 **AF)
 {
   IX j, n, m;
 
@@ -78,7 +78,7 @@ IX DelNull(const IX nSrf, SRFDAT3D *srf, IX *base, IX *cmbn,
 /*  Combine surface interchange areas.
  *  Note: AF[row][col] with col <= row in lower triangle matrix.  */
 
-IX Combine(const IX nSrf, const IX *cmbn, R4 *area, I1 **name, R8 **AF)
+IX Combine(const IX nSrf, const IX *cmbn, R4 *area, I1 **name, R4 **AF)
 /*  nSrf; number of surfaces
  *  cmbn; combination surface numbers
  *  area; surface areas
@@ -153,7 +153,7 @@ IX Combine(const IX nSrf, const IX *cmbn, R4 *area, I1 **name, R8 **AF)
 
 /*  Separate subsurfaces from base surfaces.  */
 
-void Separate(const IX nSrf, const IX *base, R4 *area, R8 **AF)
+void Separate(const IX nSrf, const IX *base, R4 *area, R4 **AF)
 /*  nSrf; number of surfaces
  *  base; base surface numbers
  *  area; surface areas
@@ -203,7 +203,7 @@ void Separate(const IX nSrf, const IX *base, R4 *area, R8 **AF)
 /*    Normalize the view factors for an enclosure so that for each row i
  *    SUM(F[i,j]) = EMIT[i] and also AF(i,j) = AF(j,i) for all i, j.  */
 
-void NormAF(const nSrf, const R4 *emit, const R4 *area, R8 **AF,
+void NormAF(const nSrf, const R4 *emit, const R4 *area, R4 **AF,
             const R8 eMax, const IX itMax)
 /*  nSrf; number of surfaces
  *  emit; surface emittances
@@ -218,7 +218,7 @@ void NormAF(const nSrf, const R4 *emit, const R4 *area, R8 **AF,
   IX iter; /* iterations count */
   R8 err;  /* row error value */
   R8 maxError=1.0;   /* max error value */
-  R8 sumAF, sumF;
+  R4 sumAF, sumF;
 
   for(iter=0; iter<itMax && maxError>eMax; iter++) {
     for(maxError=0.0,m=1; m<=nSrf; m++) {
@@ -261,7 +261,7 @@ void NormAF(const nSrf, const R4 *emit, const R4 *area, R8 **AF,
  *  pp 84-86. Requires solution of [A]*{W} = {B}.
  *  [A] is symmetric, negative-definite.  */
 
-void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF)
+void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R4 **AF)
 /*  nSrf; number of surfaces
  *  emit; surface emittances, 0 < emit < 1
  *  area; surface areas
@@ -269,10 +269,10 @@ void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF)
  */
 {
   IX  m, n;
-  R8 *a, *w, *W;
+  R4 *a, *w, *W;
 
-  a = Alc_V(1, nSrf, sizeof(R8), __FILE__, __LINE__);
-  W = Alc_V(0, nSrf*nSrf, sizeof(R8), __FILE__, __LINE__);
+  a = Alc_V(1, nSrf, sizeof(R4), __FILE__, __LINE__);
+  W = Alc_V(0, nSrf*nSrf, sizeof(R4), __FILE__, __LINE__);
 
   /* subtract AREA/RHO from diagonal elements */
   for(n=1; n<=nSrf; n++) {
@@ -282,14 +282,14 @@ void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF)
   }
 
   LUFactorSymm(nSrf, AF);  /* factor AF (symmetric) */
-  
+
   w = W-1; /* This will get the indexing to work */
   for(n=1; n<=nSrf; n++) { /* determine response vectors */
     w[n] = -a[n];
     LUSolveSymm(nSrf, AF, w);
     w += nSrf;
   }
-  
+
   w = W-1; /* This will get the indexing to work */
   /* Compute total interchange areas */
   for(n=1; n<=nSrf; n++) {
@@ -303,8 +303,8 @@ void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF)
     w += nSrf;
   }
 
-  Fre_V(a, 1, nSrf, sizeof(R8), __FILE__, __LINE__);
-  Fre_V(W, 0, nSrf*nSrf, sizeof(R8), __FILE__, __LINE__);
+  Fre_V(a, 1, nSrf, sizeof(R4), __FILE__, __LINE__);
+  Fre_V(W, 0, nSrf*nSrf, sizeof(R4), __FILE__, __LINE__);
 
 }  /* end of IntFac */
 
@@ -316,10 +316,10 @@ void IntFac(const IX nSrf, const R4 *emit, const R4 *area, R8 **AF)
  *  Decomposition of this form of matrix is supposed to be very stable
  *  without pivoting: _Numerical Recipes in C_, 2nd ed., p 97.  */
 
-void LUFactorSymm(const IX neq, R8 **a)
+void LUFactorSymm(const IX neq, R4 **a)
 {
   IX i, j;
-  R8 dot, tmp;
+  R4 dot, tmp;
 
   a[1][1] = 1.0 / a[1][1];
   for(i=2; i<=neq; i++) { /* process column i */
@@ -346,10 +346,10 @@ void LUFactorSymm(const IX neq, R8 **a)
 /*  Double precision dot product.  dot = SUM(x[1]*y[1] ... x[n]*y[n]).
  *  Passing pointers to x[0] and y[0].  */
 
-R8 DotProd(const IX n, const R8 *x, const R8 *y)
+R4 DotProd(const IX n, const R4 *x, const R4 *y)
 {
   IX j;
-  R8 dot=0.0;
+  R4 dot=0.0;
 
   for(j=n; j; j--) {
     dot += x[j] * y[j];
@@ -364,8 +364,8 @@ R8 DotProd(const IX n, const R8 *x, const R8 *y)
 /*  Solution of simultaneous equations [A] * {X} = {B}, where [A] (which is
  *  stored by rows) has already been reduced to L-U form in LUFactorSymm().
  *  The solution vector {X} over-writes {B}.  */
-/* const removal: const R8 **a */
-void LUSolveSymm(const IX neq, R8 **a, R8 *b)
+/* const removal: const R4 **a */
+void LUSolveSymm(const IX neq, R4 **a, R4 *b)
 {
   IX i;
 
@@ -388,7 +388,7 @@ void LUSolveSymm(const IX neq, R8 **a, R8 *b)
 /*  Double precision product:  Yi = Yi + A * Xi  for i = 1 to N.
  *  Passing pointers to x[0] and y[0].  */
 
-void DAXpY(const IX n, const R8 a, const R8 *x, R8 *y)
+void DAXpY(const IX n, const R4 a, const R4 *x, R4 *y)
 {
   IX j;
 
@@ -397,4 +397,3 @@ void DAXpY(const IX n, const R8 a, const R8 *x, R8 *y)
   }
 
 }  /* end DAXpY */
-

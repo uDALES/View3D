@@ -71,7 +71,7 @@ R8 _sli1;   /* use SLI if relSep > _sli1 */
  */
 
 void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
-            R8 **AF, VFCTRL *vfCtrl)
+            R4 **AF, VFCTRL *vfCtrl)
 /* srf    - surface / vertex data for all surfaces
  * base   - base surface numbers
  * possibleObstr - list of possible view obstructing surfaces

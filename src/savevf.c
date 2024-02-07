@@ -41,7 +41,7 @@
 /*  Save view factors as square array; + area + emit; text format.  */
 
 void SaveF0(I1 *fileName, I1 *header, IX nSrf,
-            R4 *area, R4 *emit, R8 **AF, R4 *F)
+            R4 *area, R4 *emit, R4 **AF, R4 *F)
 {
   FILE *vfout;
   IX n;    /* row */
@@ -85,7 +85,7 @@ void SaveF0(I1 *fileName, I1 *header, IX nSrf,
 /*  Save view factors as square array; binary format. */
 
 void SaveF1(I1 *fileName, I1 *header, IX nSrf,
-            R4 *area, R4 *emit, R8 **AF, R4 *F)
+            R4 *area, R4 *emit, R4 **AF, R4 *F)
 {
   FILE *vfout;
   IX n;    /* row */
@@ -117,7 +117,7 @@ void SaveF1(I1 *fileName, I1 *header, IX nSrf,
 /*  Save view factors in sparse text format.  */
 
 void SaveF2(I1 *fileName, I1 *header, IX nSrf,
-            R4 *area, R4 *emit, R8 **AF, R4 *F)
+            R4 *area, R4 *emit, R4 **AF, R4 *F)
 {
   FILE *vfout;
   IX n;    /* row */
@@ -160,7 +160,7 @@ void SaveF2(I1 *fileName, I1 *header, IX nSrf,
 /*  Save view factors from 3D calculations.  */
 
 void SaveAF(I1 *fileName, I1 *header, IX nSrf, I1 *title, I1 **name,
-            R4 *area, R4 *emit, R8 **AF)
+            R4 *area, R4 *emit, R4 **AF)
 {
   FILE *vfout;
   IX n;    /* row */
@@ -198,7 +198,7 @@ void SaveAF(I1 *fileName, I1 *header, IX nSrf, I1 *title, I1 **name,
 
 void SaveVF(I1 *fileName, I1 *program, I1 *version,
             IX format, IX encl, IX didemit, IX nSrf,
-            R4 *area, R4 *emit, R8 **AF, R4 *vtmp)
+            R4 *area, R4 *emit, R4 **AF, R4 *vtmp)
 {
   I1 header[32];
   IX j;
