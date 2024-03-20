@@ -185,7 +185,7 @@ void View3D(SRFDAT3D *srf, const IX *base, IX *possibleObstr,
       }
       _col = m;
       if(vfCtrl->row > 0 && vfCtrl->col == 0) { /* progress display - single surface */
-        fprintf(stderr, "\rSurface %d to surface %d", _row, _col);
+        //fprintf(stderr, "\rSurface %d to surface %d", _row, _col);
       }
       if(_list>0 && vfCtrl->row) {
         fprintf(_ulog, "*ROW %d, COL %d\n", _row, _col);

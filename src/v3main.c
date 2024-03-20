@@ -32,6 +32,7 @@
 
 FILE *_unxt = NULL; /* input file */
 FILE *_ulog = NULL; /* log file */
+FILE *_outFile = NULL; /* output file */
 IX _echo=0;  /* true = echo input file */
 IX _list=0;  /* output control, higher value = more output:
                 0 = summary;
@@ -366,6 +367,7 @@ IX main(IX argc, I1 **argv)
     R8 ai=1/area[n];
     R8 F, sum;
     fprintf(_ulog, "\n");
+    _outFile = fopen(outFile, "w");
     if(vfCtrl.col) {
       fprintf(_ulog, "F[%d][%d] = %.5e\n\n", n, m, AF[n][m]*ai);
       goto FreeMemory;
@@ -398,6 +400,7 @@ IX main(IX argc, I1 **argv)
         sum += F;
         fprintf(_ulog, "%5d %13.5e %13.5e %13.5e  %s\n",
           m, AF[n][m], F, AF[n][m]/area[m], name[m]);
+        fprintf(_outFile, "%.5f\n", F);
       }
     }
     fprintf(_ulog, "\n    sum[F(n,m)] = %.8f\n\n", sum);
